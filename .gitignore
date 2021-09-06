@@ -5,6 +5,9 @@ node_modules
 # Quasar core related directories
 .quasar
 /dist
+.idea
+
+.cf_api_token
 
 # Cordova related directories and files
 /src-cordova/node_modules
