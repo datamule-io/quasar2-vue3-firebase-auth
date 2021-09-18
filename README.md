@@ -3,6 +3,8 @@
 This project is a minimal working quasar project that has all the needed pages and functionality to handle signup, login, forgot-password and verify email, with Google or email/password.
 Everything else is mostly left untouched as Quasar vanilla project.
 
+![login image](./login.png)
+
 ## Getting started
 This project was tested with node v14.17.4
 To get started:
