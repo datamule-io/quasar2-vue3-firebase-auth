@@ -49,4 +49,14 @@ To get started:
 
 TBC
 
+## Contribution
+
+Contributions are welcome. Just create a PR and explain what you've done :)
+
+## Todo (in no particular order)
+1. Email verification
+2. Change password flow - make "choose new password" part of this webapp. Currently it's under myapp.firebaseio subdomain.
+3. Passwordless login (email link)
+4. Send token to server for authorization
+
 
