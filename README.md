@@ -49,7 +49,54 @@ To get started:
 
 ## Server authentication
 
-TBC
+To authenticate user on your server, get idToken and send it as `Authorization` header. I usually prefix it with the string `IDTOKEN.` so on the server I know what type of token was sent and how I should verify it. Of course you don't have to do that, and if you only expect this type of token you can skip the prefix. Here's client side example:
+```javascript
+import { getIdToken } from '../services/auth'
+// ...
+const idToken = await getIdToken();
+const res = await fetch (url, {
+  method,
+  headers: {
+      'Authorization': `IDTOKEN.${idToken}`
+  },
+  body
+})
+```
+
+### Validating on the Server
+Depending on your environment, here's an example how to verify the token manually. You can also use Firestore SDK as explained [here](https://firebase.google.com/docs/auth/admin/verify-id-tokens#verify_id_tokens_using_the_firebase_admin_sdk)
+The returned parsed idToken will have `uid` property which you can use as unique identifier in your server code.
+
+```javascript
+import jwt from 'jsonwebtoken';
+
+const auth = request.headers.authorization;
+if (auth && auth.startsWith('IDTOKEN.')) {
+  const idToken = await validateIdToken(auth.substr('IDTOKEN.'.length));
+  if (idToken.uid) {
+      // verification succeeded. Use uid as unique identifier for that user
+  }
+}
+
+export async function validateIdToken (idToken) {
+  async function getKey(header){
+    const res = await fetch('https://www.googleapis.com/robot/v1/metadata/x509/securetoken@system.gserviceaccount.com')
+    const keys = await res.json();
+    return keys[header.kid];
+  }
+  const tokenHeader = jwt.decode(idToken, {complete: true}).header;
+  // check that tokenHeader.iss === 'https://securetoken.google.com/<projectId>'
+  // check that tokenHeader.aud === '<projectId>'
+  let key = await getKey(tokenHeader);
+  key = key.trim();
+  try {
+    return jwt.verify(idToken, key);
+  } catch (err) {
+    console.log("ERROR!", err);
+    return {};
+  }
+}
+```
 
 ## Contribution
 
@@ -59,6 +106,7 @@ Contributions are welcome. Just create a PR and explain what you've done :)
 1. Email verification
 2. Change password flow - make "choose new password" part of this webapp. Currently it's under myapp.firebaseio subdomain.
 3. Passwordless login (email link)
-4. Send token to server for authorization
+4. ~~Send token to server for authorization~~
+5. Anonymous signin - allow users to try before signing up, and then continue with their work after signup - https://firebase.google.com/docs/auth/web/anonymous-auth
 
 
